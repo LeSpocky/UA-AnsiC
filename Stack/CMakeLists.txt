@@ -14,14 +14,14 @@
 #   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
 #
 
-#
-# Hint at old root folder (see build_win32/build_win64.bat)
-#
+if(WIN32)
+    #
+    # Hint at old root folder (see build_win32/build_win64.bat)
+    #
     set (OPENSSL_ROOT_DIR ${_PROJECT_ROOT}/openssl)
-    include(FindOpenSSL)
-if(NOT OPENSSL_FOUND)
-    message(FATAL_ERROR, "No openssl found - please install")
-endif()
+endif(WIN32)
+find_package(OpenSSL REQUIRED)
+
     set(_uastack_src
         core/opcua_buffer.c
         core/opcua_core.c
@@ -159,7 +159,6 @@ endif()
         PUBLIC stackcore
         PUBLIC transport/https
         PUBLIC transport/tcp
-        PUBLIC ${OPENSSL_INCLUDE_DIR}
     )
     option(trace_enable "set to OFF to disable stack tracing." ON)
 if (trace_enable)
@@ -191,7 +190,7 @@ else()
     target_compile_definitions(uastack PUBLIC _GNU_SOURCE)
     target_link_libraries(uastack PRIVATE Threads::Threads)
 endif()
-    target_link_libraries(uastack PUBLIC ${OPENSSL_LIBRARIES})
+target_link_libraries(uastack PRIVATE OpenSSL::SSL OpenSSL::Crypto)
 
 if(WIN32)
   # Place here the install rule for win32

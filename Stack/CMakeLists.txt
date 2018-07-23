@@ -194,6 +194,9 @@ target_link_libraries(uastack PRIVATE OpenSSL::SSL OpenSSL::Crypto)
 
 if(WIN32)
   # Place here the install rule for win32
-elseif(LINUX)
-    install (TARGETS uastack LIBRARY DESTINATION lib)
+elseif(UNIX)
+    install(TARGETS uastack
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib
+    )
 endif()

@@ -15,7 +15,9 @@
 #
 cmake_minimum_required(VERSION 3.4)
 
-project(UA-AnsiC)
+project(UA-AnsiC
+	VERSION 1.04.342
+)
 include(CMakeToolsHelpers OPTIONAL)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -38,6 +40,12 @@ endif()
 if(NOT "${compile_options_CXX}" STREQUAL "OFF")
     set(CMAKE_CXX_FLAGS "${compile_options_CXX} ${CMAKE_CXX_FLAGS}")
 endif()
+
+option(BUILD_SHARED_LIBS
+	"Global flag to cause add_library to create shared libraries if on."
+	OFF
+)
+message(STATUS "BUILD_SHARED_LIBS: ${BUILD_SHARED_LIBS}")
 
 add_subdirectory(Stack)
 add_subdirectory(AnsiCSample)

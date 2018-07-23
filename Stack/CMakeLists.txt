@@ -150,7 +150,11 @@ else()
 #     set(THREADS_PREFER_PTHREAD_FLAG 1)
     find_package(Threads)
 endif()
-    add_library(uastack STATIC ${_uastack_src})
+    add_library(uastack ${_uastack_src})
+    set_target_properties(uastack PROPERTIES
+        SOVERSION   ${PROJECT_VERSION_MAJOR}
+        VERSION     ${PROJECT_VERSION}
+    )
     target_include_directories(uastack
         PUBLIC core
         PUBLIC proxystub/clientproxy

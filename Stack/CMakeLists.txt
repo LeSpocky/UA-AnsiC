@@ -42,12 +42,44 @@ endif()
         core/opcua_timer.c
         core/opcua_trace.c
         core/opcua_utilities.c
+
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_binary.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_cryptofactory.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_datetime.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_guid.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_interface.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_internal.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_memory.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_mutex.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_openssl.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_openssl_aes.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_openssl_hmac_sha.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_openssl_nosecurity.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_openssl_pki.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_openssl_pki_nosecurity.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_openssl_random.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_openssl_rsa.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_openssl_sha.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_openssl_x509.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_pkifactory.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_semaphore.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_socket.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_socket_interface.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_socket_internal.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_socket_ssl.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_string.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_thread.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_timer.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_trace.c
+        platforms/${UASTACK_PLATFORM_DIR}/opcua_p_utilities.c
+
         proxystub/clientproxy/opcua_asynccallstate.c
         proxystub/clientproxy/opcua_channel.c
         proxystub/clientproxy/opcua_clientapi.c
         proxystub/serverstub/opcua_endpoint.c
         proxystub/serverstub/opcua_serverapi.c
         proxystub/serverstub/opcua_servicetable.c
+
         securechannel/opcua_secureconnection.c
         securechannel/opcua_securelistener.c
         securechannel/opcua_securelistener_channelmanager.c
@@ -55,6 +87,7 @@ endif()
         securechannel/opcua_securestream.c
         securechannel/opcua_soapsecurechannel.c
         securechannel/opcua_tcpsecurechannel.c
+
         stackcore/opcua_binarydecoder.c
         stackcore/opcua_binaryencoder.c
         stackcore/opcua_builtintypes.c
@@ -72,11 +105,13 @@ endif()
         stackcore/opcua_stream.c
         stackcore/opcua_stringtable.c
         stackcore/opcua_types.c
+
         transport/https/opcua_httpsconnection.c
         transport/https/opcua_httpslistener.c
         transport/https/opcua_httpslistener_connectionmanager.c
         transport/https/opcua_httpsstream.c
         transport/https/opcua_https_internal.c
+
         transport/tcp/opcua_tcpconnection.c
         transport/tcp/opcua_tcplistener.c
         transport/tcp/opcua_tcplistener_connectionmanager.c
@@ -84,71 +119,10 @@ endif()
     )
 
 if(WIN32)
-    set(_uastack_src ${_uastack_src}
-        platforms/win32/opcua_p_binary.c
-        platforms/win32/opcua_p_cryptofactory.c
-        platforms/win32/opcua_p_datetime.c
-        platforms/win32/opcua_p_guid.c
-        platforms/win32/opcua_p_interface.c
-        platforms/win32/opcua_p_internal.c
-        platforms/win32/opcua_p_memory.c
-        platforms/win32/opcua_p_mutex.c
-        platforms/win32/opcua_p_openssl.c
-        platforms/win32/opcua_p_openssl_aes.c
-        platforms/win32/opcua_p_openssl_hmac_sha.c
-        platforms/win32/opcua_p_openssl_nosecurity.c
-        platforms/win32/opcua_p_openssl_pki.c
-        platforms/win32/opcua_p_openssl_pki_nosecurity.c
-        platforms/win32/opcua_p_openssl_random.c
-        platforms/win32/opcua_p_openssl_rsa.c
-        platforms/win32/opcua_p_openssl_sha.c
-        platforms/win32/opcua_p_openssl_x509.c
-        platforms/win32/opcua_p_pkifactory.c
-        platforms/win32/opcua_p_semaphore.c
-        platforms/win32/opcua_p_socket.c
-        platforms/win32/opcua_p_socket_interface.c
-        platforms/win32/opcua_p_socket_internal.c
-        platforms/win32/opcua_p_socket_ssl.c
-        platforms/win32/opcua_p_string.c
-        platforms/win32/opcua_p_thread.c
-        platforms/win32/opcua_p_timer.c
-        platforms/win32/opcua_p_trace.c
-        platforms/win32/opcua_p_utilities.c
+    list(APPEND _uastack_src
         platforms/win32/opcua_p_win32_pki.c
     )
 else()
-    set(_uastack_src ${_uastack_src}
-        platforms/linux/opcua_p_binary.c
-        platforms/linux/opcua_p_cryptofactory.c
-        platforms/linux/opcua_p_datetime.c
-        platforms/linux/opcua_p_guid.c
-        platforms/linux/opcua_p_interface.c
-        platforms/linux/opcua_p_internal.c
-        platforms/linux/opcua_p_memory.c
-        platforms/linux/opcua_p_mutex.c
-        platforms/linux/opcua_p_openssl.c
-        platforms/linux/opcua_p_openssl_aes.c
-        platforms/linux/opcua_p_openssl_hmac_sha.c
-        platforms/linux/opcua_p_openssl_nosecurity.c
-        platforms/linux/opcua_p_openssl_pki.c
-        platforms/linux/opcua_p_openssl_pki_nosecurity.c
-        platforms/linux/opcua_p_openssl_random.c
-        platforms/linux/opcua_p_openssl_rsa.c
-        platforms/linux/opcua_p_openssl_sha.c
-        platforms/linux/opcua_p_openssl_x509.c
-        platforms/linux/opcua_p_pkifactory.c
-        platforms/linux/opcua_p_semaphore.c
-        platforms/linux/opcua_p_socket.c
-        platforms/linux/opcua_p_socket_interface.c
-        platforms/linux/opcua_p_socket_internal.c
-        platforms/linux/opcua_p_socket_ssl.c
-        platforms/linux/opcua_p_string.c
-        platforms/linux/opcua_p_thread.c
-        platforms/linux/opcua_p_timer.c
-        platforms/linux/opcua_p_trace.c
-        platforms/linux/opcua_p_utilities.c
-    )
-
     set(CMAKE_THREAD_PREFER_PTHREAD 1)
 #     set(THREADS_PREFER_PTHREAD_FLAG 1)
     find_package(Threads)

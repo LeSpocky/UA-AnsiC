@@ -177,6 +177,7 @@ set(UASTACK_HEADERS
 )
 
     add_library(uastack ${_uastack_src})
+    add_library(uastack::uastack ALIAS uastack)
     set_target_properties(uastack PROPERTIES
         SOVERSION   ${PROJECT_VERSION_MAJOR}
         VERSION     ${PROJECT_VERSION}
@@ -232,8 +233,30 @@ if(WIN32)
   # Place here the install rule for win32
 elseif(UNIX)
     install(TARGETS uastack
+        EXPORT uastack-targets
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
+    )
+
+    install(EXPORT uastack-targets
+        NAMESPACE uastack::
+        DESTINATION lib/cmake/uastack
+    )
+
+    include(CMakePackageConfigHelpers) # cmake 2.8.8
+    configure_package_config_file(uastack-config.cmake.in uastack-config.cmake
+        INSTALL_DESTINATION lib/cmake/uastack
+        NO_SET_AND_CHECK_MACRO
+        NO_CHECK_REQUIRED_COMPONENTS_MACRO
+    )
+    write_basic_package_version_file(
+        uastack-config-version.cmake
+        COMPATIBILITY SameMajorVersion
+    )
+    install(FILES
+        "${CMAKE_CURRENT_BINARY_DIR}/uastack-config.cmake"
+        "${CMAKE_CURRENT_BINARY_DIR}/uastack-config-version.cmake"
+        DESTINATION lib/cmake/uastack
     )
     install(FILES
         ${UASTACK_HEADERS}

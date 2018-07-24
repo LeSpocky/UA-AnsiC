@@ -1,0 +1,5 @@
+get_filename_component(_dir "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+if(NOT TARGET uastack::uastack)
+    include("${_dir}/uastack-targets.cmake")
+endif()

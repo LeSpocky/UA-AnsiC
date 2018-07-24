@@ -22,6 +22,12 @@ if(WIN32)
 endif(WIN32)
 find_package(OpenSSL REQUIRED)
 
+if(WIN32)
+    set(UASTACK_PLATFORM_DIR win32)
+else()
+    set(UASTACK_PLATFORM_DIR linux)
+endif()
+
     set(_uastack_src
         core/opcua_buffer.c
         core/opcua_core.c
@@ -147,6 +153,55 @@ else()
 #     set(THREADS_PREFER_PTHREAD_FLAG 1)
     find_package(Threads)
 endif()
+
+set(UASTACK_HEADERS
+    core/opcua_buffer.h
+    core/opcua_config.h
+    core/opcua_core.h
+    core/opcua_datetime.h
+    core/opcua_errorhandling.h
+    core/opcua_exclusions.h
+    core/opcua_guid.h
+    core/opcua_memory.h
+    core/opcua_memorystream.h
+    core/opcua_proxystub.h
+    core/opcua_socket.h
+    core/opcua_stackstatuscodes.h
+    core/opcua_statuscodes.h
+    core/opcua_string.h
+    core/opcua_thread.h
+    core/opcua_timer.h
+    core/opcua_trace.h
+    core/opcua_utilities.h
+    platforms/${UASTACK_PLATFORM_DIR}/opcua_p_crypto.h
+    platforms/${UASTACK_PLATFORM_DIR}/opcua_p_interface.h
+    platforms/${UASTACK_PLATFORM_DIR}/opcua_p_pki.h
+    platforms/${UASTACK_PLATFORM_DIR}/opcua_p_types.h
+    platforms/${UASTACK_PLATFORM_DIR}/opcua_p_utilities.h
+    platforms/${UASTACK_PLATFORM_DIR}/opcua_platformdefs.h
+    proxystub/clientproxy/opcua_channel.h
+    proxystub/clientproxy/opcua_clientapi.h
+    proxystub/serverstub/opcua_endpoint.h
+    proxystub/serverstub/opcua_serverapi.h
+    stackcore/opcua_attributes.h
+    stackcore/opcua_binaryencoder.h
+    stackcore/opcua_builtintypes.h
+    stackcore/opcua_browsenames.h
+    stackcore/opcua_connection.h
+    stackcore/opcua_credentials.h
+    stackcore/opcua_crypto.h
+    stackcore/opcua_decoder.h
+    stackcore/opcua_encodeableobject.h
+    stackcore/opcua_encoder.h
+    stackcore/opcua_enumeratedtype.h
+    stackcore/opcua_identifiers.h
+    stackcore/opcua_messagecontext.h
+    stackcore/opcua_pki.h
+    stackcore/opcua_stream.h
+    stackcore/opcua_stringtable.h
+    stackcore/opcua_types.h
+)
+
     add_library(uastack ${_uastack_src})
     set_target_properties(uastack PROPERTIES
         SOVERSION   ${PROJECT_VERSION_MAJOR}
@@ -158,6 +213,7 @@ endif()
             "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/stackcore>"
             "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/proxystub/clientproxy>"
             "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/proxystub/serverstub>"
+            "$<INSTALL_INTERFACE:include/uastack>"
         PRIVATE
             securechannel
             transport/https
@@ -204,5 +260,9 @@ elseif(UNIX)
     install(TARGETS uastack
         LIBRARY DESTINATION lib
         ARCHIVE DESTINATION lib
+    )
+    install(FILES
+        ${UASTACK_HEADERS}
+        DESTINATION include/uastack
     )
 endif()

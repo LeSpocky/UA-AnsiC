@@ -111,9 +111,6 @@ if(WIN32)
         platforms/win32/opcua_p_win32_pki.c
     )
 else()
-    include(CheckIncludeFile)
-    include(FindPkgConfig)
- 
     set(_uastack_src ${_uastack_src}
         platforms/linux/opcua_p_binary.c
         platforms/linux/opcua_p_cryptofactory.c

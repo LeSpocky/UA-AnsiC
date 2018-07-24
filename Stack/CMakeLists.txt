@@ -153,13 +153,15 @@ endif()
         VERSION     ${PROJECT_VERSION}
     )
     target_include_directories(uastack
-        PUBLIC core
-        PUBLIC proxystub/clientproxy
-        PUBLIC proxystub/serverstub
-        PUBLIC securechannel
-        PUBLIC stackcore
-        PUBLIC transport/https
-        PUBLIC transport/tcp
+        PUBLIC
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/core>"
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/stackcore>"
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/proxystub/clientproxy>"
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/proxystub/serverstub>"
+        PRIVATE
+            securechannel
+            transport/https
+            transport/tcp
     )
     option(trace_enable "set to OFF to disable stack tracing." ON)
 if (trace_enable)
@@ -187,7 +189,10 @@ if(WIN32)
         PUBLIC rpcrt4
     )
 else()
-    target_include_directories(uastack PUBLIC platforms/linux)
+    target_include_directories(uastack
+        PUBLIC
+            "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/platforms/linux>"
+    )
     target_compile_definitions(uastack PUBLIC _GNU_SOURCE)
     target_link_libraries(uastack PRIVATE Threads::Threads)
 endif()

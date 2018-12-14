@@ -546,14 +546,19 @@ OpcUa_InitializeStatus(OpcUa_Module_SecureStream, "PrepareForSending");
     }
     else
     {
-        if(!(pSecureStream->pSecureChannel->IsOpen(pSecureStream->pSecureChannel)))
+        if(pSecureStream->pSecureChannel
+		&& !(pSecureStream->pSecureChannel->IsOpen(pSecureStream->pSecureChannel)))
         {
             OpcUa_Trace(OPCUA_TRACE_LEVEL_WARNING, "OpcUa_SecureStream_PrepareForSending: SecureStream belongs to closed secure channel!\n");
             OpcUa_GotoErrorWithStatus(OpcUa_BadSecureChannelClosed);
         }
     }
 
-    uSequenceNumber = pSecureStream->pSecureChannel->GetSequenceNumber(pSecureStream->pSecureChannel);
+    if(pSecureStream->pSecureChannel != 0)
+    {
+	uSequenceNumber = pSecureStream->pSecureChannel->GetSequenceNumber(pSecureStream->pSecureChannel);
+    } /* else keep sequence number 0 */
+
 
     eSecurityMode = pSecureStream->eMessageSecurityMode;
 

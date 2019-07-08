@@ -40,6 +40,7 @@ typedef struct _OpcUa_StatusCodeString
  *===========================================================================*/
 /*  */
 #if OPCUA_TRACE_ERROR_MACROS
+#include <opcua_trace.h>
 #define OpcUa_DeclareErrorTraceModule(xModule) OpcUa_UInt32 uModule = xModule; OpcUa_ReferenceParameter(uModule);
 #else /* OPCUA_TRACE_ERROR_MACROS */
 #define OpcUa_DeclareErrorTraceModule(xModule)

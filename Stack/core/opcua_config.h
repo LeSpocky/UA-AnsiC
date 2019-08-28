@@ -140,7 +140,7 @@
  *===========================================================================*/
 /** @brief Enable output to trace device. */
 #ifndef OPCUA_TRACE_ENABLE
-#define OPCUA_TRACE_ENABLE                          OPCUA_CONFIG_NO
+#define OPCUA_TRACE_ENABLE                          OPCUA_CONFIG_YES
 #endif
 
 /** @brief Enable output to trace device. */

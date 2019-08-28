@@ -37,6 +37,7 @@
 #include <sys/socket.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <ifaddrs.h>
 //#include <netinet/in.h>
 //#include <netinet/tcp.h>
 #include <errno.h>
@@ -51,6 +52,7 @@
 #include <opcua.h>
 #include <opcua_core.h>
 #include <opcua_certificates.h>
+#include <opcua_trace.h>
 
 #include <openssl/x509.h>
 #include <openssl/x509v3.h>
@@ -2649,9 +2651,9 @@ OpcUa_StatusCode OpcUa_Certificate_LookupLocalhostNames(
 {
 	char sBuffer[NI_MAXHOST];
 	std::vector<std::string> hostnames;
-	struct addrinfo* pResult = NULL;
-	struct addrinfo tHints;
-	int iResult = 0;
+
+	struct ifaddrs	*ifaddr, *ifa;
+	int iResult;
 
 OpcUa_InitializeStatus(OpcUa_Module_Crypto, "sDnsName");
 
@@ -2661,57 +2663,51 @@ OpcUa_InitializeStatus(OpcUa_Module_Crypto, "sDnsName");
 	*a_pHostNames = NULL;
 	*a_pNoOfHostNames = 0;
 
-	memset(&tHints, 0, sizeof(tHints));
-
+	/* get hostname */
 	if (gethostname(sBuffer, sizeof(sBuffer)) != 0)
 	{
 		OpcUa_GotoErrorWithStatus(OpcUa_BadCommunicationError);
 	}
-
 	hostnames.push_back(sBuffer);
 
-	tHints.ai_family = AF_UNSPEC;
-	tHints.ai_socktype = SOCK_STREAM;
-	tHints.ai_protocol = IPPROTO_TCP;
-
-	iResult = getaddrinfo(sBuffer, NULL, &tHints, &pResult);
-
-	if (iResult != 0)
+	/* get local ip address(es) */
+	iResult = getifaddrs( &ifaddr );
+	if (iResult == -1)
 	{
-printf("getaddrinfo failed iResult = 0x%08X, %s\n", iResult, gai_strerror(iResult));
+		OpcUa_Trace(OPCUA_TRACE_LEVEL_ERROR,
+				"getifaddrs failed iResult = 0x%08X, %s\n",
+				iResult, gai_strerror(iResult));
 		OpcUa_GotoErrorWithStatus(OpcUa_BadCommunicationError);;
 	}
 
-	for (struct addrinfo* ptr = pResult; ptr != NULL ; ptr = ptr->ai_next)
+	for (ifa = ifaddr; ifa != NULL; ifa = ifa->ifa_next)
 	{
-		if (ptr->ai_family == AF_INET)
+		if (ifa->ifa_addr->sa_family == AF_INET)
 		{
-			struct sockaddr_in tAddress;
-			memcpy(&tAddress, ptr->ai_addr, sizeof(struct sockaddr_in));
-			hostnames.push_back(inet_ntoa(tAddress.sin_addr));
-		}
+			char str[INET_ADDRSTRLEN];
+			// now get it back and print it
+			inet_ntop(AF_INET,
+					&(((struct sockaddr_in *) ifa->ifa_addr)->sin_addr),
+					str, INET_ADDRSTRLEN);
 
-		/*
-		if (ptr->ai_family == AF_INET6)
+			hostnames.push_back(str);
+		}
+/*
+ * TODO: need to test this with well configured IPV6 host
+		if ( ifa->ifa_addr->sa_family == AF_INET6 )
 		{
-			struct sockaddr_in6 tAddress;
-			memcpy(&tAddress, ptr->ai_addr, sizeof(struct sockaddr_in6));
+			char str[INET6_ADDRSTRLEN];
+			// now get it back and print it
+			inet_ntop(AF_INET6,
+					&(((struct sockaddr_in6 *) ifa->ifa_addr)->sin6_addr),
+					str, INET6_ADDRSTRLEN);
 
-			// enclose in [] so it can be used in a URL.
-			sBuffer[0] = '[';
-			InetNtop(AF_INET6, &tAddress.sin6_addr, sBuffer+1, NI_MAXHOST);
-
-			int iEnd = strlen(sBuffer);
-			sBuffer[iEnd] = ']';
-			sBuffer[iEnd+1] = 0;
-
-			hostnames.push_back(sBuffer);
+			hostnames.push_back(str);
 		}
-		*/
+*/
 	}
 
-	freeaddrinfo(pResult);
-	pResult = NULL;
+	freeifaddrs( ifaddr );
 
 	uStatus = OpcUa_Certificate_CopyStrings(hostnames, a_pHostNames, a_pNoOfHostNames);
 	OpcUa_GotoErrorIfBad(uStatus);
@@ -2719,9 +2715,9 @@ printf("getaddrinfo failed iResult = 0x%08X, %s\n", iResult, gai_strerror(iResul
 OpcUa_ReturnStatusCode;
 OpcUa_BeginErrorHandling;
 
-	if (pResult != NULL)
+	if (iResult != -1)
 	{
-		freeaddrinfo(pResult);
+		freeifaddrs( ifaddr );
 	}
 
 OpcUa_FinishErrorHandling;

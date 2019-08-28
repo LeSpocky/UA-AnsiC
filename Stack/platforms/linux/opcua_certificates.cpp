@@ -942,7 +942,7 @@ OpcUa_InitializeStatus(OpcUa_Module_Crypto, "OpcUa_Certificate_Create");
 		tPublicKey,
 		pExtensions,
 		(a_bIsCA)?4:6,
-		OPCUA_P_SHA_160,
+		OPCUA_P_SHA_256,
 		*pPrivateKey,
 		a_pCertificate);
 

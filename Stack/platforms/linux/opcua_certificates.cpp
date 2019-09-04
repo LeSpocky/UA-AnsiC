@@ -2094,6 +2094,84 @@ OpcUa_BeginErrorHandling;
 OpcUa_FinishErrorHandling;
 }
 
+/*============================================================================
+ * OpcUa_Certificate_RemoveCertificateInStore
+ *===========================================================================*/
+OpcUa_StatusCode OpcUa_Certificate_RemoveCertificateFromStore(
+	OpcUa_StringA		a_sStorePath,
+	OpcUa_P_FileFormat a_eFileFormat,
+	OpcUa_ByteString* a_pCertificate,
+	OpcUa_Key*			a_pPrivateKey)
+{
+	std::string filePath;
+
+	OpcUa_InitializeStatus(OpcUa_Module_Crypto,
+					   "OpcUa_Certificate_RemoveCertificateFromStore");
+
+	OpcUa_ReturnErrorIfArgumentNull(a_sStorePath);
+	OpcUa_ReturnErrorIfArgumentNull(a_pCertificate);
+	OpcUa_ReturnErrorIfArgumentNull(a_pPrivateKey);
+
+	// check for supported format.
+	if (a_eFileFormat == OpcUa_Crypto_Encoding_Invalid)
+	{
+		return OpcUa_BadInvalidArgument;
+	}
+
+		// check for supported key type.
+	if (a_pPrivateKey->Type != OpcUa_Crypto_sha1WithRSAEncryption_Id
+			&& a_pPrivateKey->Type != OpcUa_Crypto_KeyType_Rsa_Private)
+	{
+		return OpcUa_BadInvalidArgument;
+	}
+
+	// get the file name for the private.key
+	filePath = OpcUa_Certificate_GetFilePathForCertificate(
+		a_sStorePath,
+		a_pCertificate,
+		a_eFileFormat,
+		OpcUa_True);
+
+	if (filePath.empty())
+	{
+		OpcUa_Trace(OPCUA_TRACE_LEVEL_ERROR,
+					"Cannot get private key path");
+	}
+	else
+	{
+		if ( remove (filePath.c_str()) != 0 )
+		{
+			OpcUa_Trace(OPCUA_TRACE_LEVEL_ERROR,
+					"Cannot remove %s", filePath.c_str());
+		}
+	}
+
+	// get the file name for the public key
+	filePath = OpcUa_Certificate_GetFilePathForCertificate(
+		a_sStorePath,
+		a_pCertificate,
+		OpcUa_Crypto_Encoding_DER,
+		OpcUa_True);
+
+	if (filePath.empty())
+	{
+		OpcUa_Trace(OPCUA_TRACE_LEVEL_ERROR,
+					"Cannot get public key path");
+	}
+	else
+	{
+		if ( remove (filePath.c_str()) != 0 )
+		{
+			OpcUa_Trace(OPCUA_TRACE_LEVEL_ERROR,
+					"Cannot remove %s", filePath.c_str());
+		}
+	}
+
+OpcUa_ReturnStatusCode;
+OpcUa_BeginErrorHandling;
+OpcUa_FinishErrorHandling;
+}
+
 ///*============================================================================
 // * OpcUa_Certificate_FreeFindContext
 // *===========================================================================*/

@@ -184,6 +184,22 @@ OpcUa_StatusCode OpcUa_Certificate_FindCertificateInStore(
 	OpcUa_Key*		a_pPrivateKey);
 
 /** 
+ * @brief Remove the public/private key file from the certificate store.
+ *
+ * @param sStorePath,	[in]		The full path to the certificate store.
+ * @param eFileFormat				[in]  The format of the private key file.
+ * @param pCertificate   [out]	The certificate encoded as a DER blob.
+ * @param pPrivateKey	[out]	The private key.
+ *
+ * @return Status code; @see opcua_statuscodes.h
+ */
+OpcUa_StatusCode OpcUa_Certificate_RemoveCertificateFromStore(
+	OpcUa_StringA		a_sStorePath,
+	OpcUa_P_FileFormat a_eFileFormat,
+	OpcUa_ByteString* a_pCertificate,
+	OpcUa_Key*			a_pPrivateKey);
+
+/** 
  * @brief Frees the context previous returned.
  *
  * @param pContext [in/out] The context used to continue a find previous operation.

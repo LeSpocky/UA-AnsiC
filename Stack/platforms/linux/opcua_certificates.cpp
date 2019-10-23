@@ -2731,7 +2731,7 @@ OpcUa_StatusCode OpcUa_Certificate_LookupLocalhostNames(
 	std::vector<std::string> hostnames;
 
 	struct ifaddrs	*ifaddr, *ifa;
-	int iResult;
+	int iResult = 0;
 
 OpcUa_InitializeStatus(OpcUa_Module_Crypto, "sDnsName");
 

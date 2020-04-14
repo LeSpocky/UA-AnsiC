@@ -65,6 +65,15 @@
 #include <openssl/conf.h>
 
 //static char OID_AUTHORITY_KEY_IDENTIFIER[] = { 85, 29, 1 };
+
+/*
+ *	NOTE	I consider that '7' to be a typo. No standards document
+ *			researched (RFC, ITU, …) from the first appearance of X.509
+ *			on had this number. OpenSSL started in year 2000 with the
+ *			still valid '17' right away. Given this software started
+ *			probably around 2005 … it's wrong, remove that OID!
+ *			(ada, 2020-04-14)
+ */
 static char OID_SUBJECT_ALT_NAME[] = { 85, 29, 7 };
 
 /*============================================================================
@@ -1064,6 +1073,7 @@ OpcUa_InitializeStatus(OpcUa_Module_Crypto, "OpcUa_Certificate_GetThumbprint");
 	if (a_psThumbprint != NULL)
 	{
 		// compute the hash.
+		//	TODO	Consider using X509_digest()
 		SHA1(a_pCertificate->Data, a_pCertificate->Length, pThumbprint);
 
 		// allocate string to return.
@@ -1080,6 +1090,13 @@ OpcUa_InitializeStatus(OpcUa_Module_Crypto, "OpcUa_Certificate_GetThumbprint");
 
 	if (a_psNameEntries != NULL || a_psCommonName != NULL)
 	{
+		/*
+		 *	TODO	This is about getting the "common name", consider
+		 *			using 'X509_NAME_*' functions on the result of
+		 *			'X509_get_subject_name()' instead of parsing strings
+		 *			by ourselves …
+		 */
+
 		// get the subject name.
 		X509_name_st* pName = X509_get_subject_name(pCertificate);
 
@@ -1146,6 +1163,13 @@ OpcUa_InitializeStatus(OpcUa_Module_Crypto, "OpcUa_Certificate_GetThumbprint");
 
 	if (a_psApplicationUri != NULL || a_psDomains != NULL)
 	{
+		/*
+		 *	TODO	Use X509_get_ext_by_NID() and X509_get_ext() to
+		 *			obtain that stack of extensions. Throw away that
+		 *			"check for obsolete name" stuff, see comment on
+		 *			OID_SUBJECT_ALT_NAME above for reasoning.
+		 */
+
 		// find the subject alt name extension.
 		STACK_OF(X509_EXTENSION)* pExtensions = pCertificate->cert_info->extensions;
 

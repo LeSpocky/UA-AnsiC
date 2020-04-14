@@ -386,11 +386,11 @@ OpcUa_InitializeStatus(OpcUa_Module_Crypto, "OpcUa_Certificate_GetFilePathForCer
 
 	if (a_eFileFormat == OpcUa_Crypto_Encoding_DER)
 	{
-		filePath += DIR_SEPARATOR"certs"DIR_SEPARATOR;
+		filePath += DIR_SEPARATOR "certs" DIR_SEPARATOR;
 	}
 	else
 	{
-		filePath += DIR_SEPARATOR"private"DIR_SEPARATOR;
+		filePath += DIR_SEPARATOR "private" DIR_SEPARATOR;
 	}
 
 	if (a_bCreateAlways)

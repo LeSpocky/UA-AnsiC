@@ -66,16 +66,6 @@
 
 //static char OID_AUTHORITY_KEY_IDENTIFIER[] = { 85, 29, 1 };
 
-/*
- *	NOTE	I consider that '7' to be a typo. No standards document
- *			researched (RFC, ITU, …) from the first appearance of X.509
- *			on had this number. OpenSSL started in year 2000 with the
- *			still valid '17' right away. Given this software started
- *			probably around 2005 … it's wrong, remove that OID!
- *			(ada, 2020-04-14)
- */
-static char OID_SUBJECT_ALT_NAME[] = { 85, 29, 7 };
-
 /*============================================================================
  * OpcUa_ReadFile
  *===========================================================================*/
@@ -1098,7 +1088,7 @@ OpcUa_InitializeStatus(OpcUa_Module_Crypto, "OpcUa_Certificate_GetThumbprint");
 		 */
 
 		// get the subject name.
-		X509_name_st* pName = X509_get_subject_name(pCertificate);
+		X509_NAME* pName = X509_get_subject_name(pCertificate);
 
 		if (pName == NULL)
 		{
@@ -1163,39 +1153,12 @@ OpcUa_InitializeStatus(OpcUa_Module_Crypto, "OpcUa_Certificate_GetThumbprint");
 
 	if (a_psApplicationUri != NULL || a_psDomains != NULL)
 	{
-		/*
-		 *	TODO	Use X509_get_ext_by_NID() and X509_get_ext() to
-		 *			obtain that stack of extensions. Throw away that
-		 *			"check for obsolete name" stuff, see comment on
-		 *			OID_SUBJECT_ALT_NAME above for reasoning.
-		 */
-
 		// find the subject alt name extension.
-		STACK_OF(X509_EXTENSION)* pExtensions = pCertificate->cert_info->extensions;
+		int loc = X509_get_ext_by_NID(pCertificate,
+									  NID_subject_alt_name, -1);
+		X509_EXTENSION *pExtension = X509_get_ext(pCertificate, loc);
 
-		for (int ii = 0; ii < sk_X509_EXTENSION_num(pExtensions); ii++)
-		{
-			X509_EXTENSION* pExtension = sk_X509_EXTENSION_value(pExtensions, ii);
-
-			// get the internal id for the extension.
-			int nid = OBJ_obj2nid(pExtension->object);
-
-			if (nid == 0)
-			{
-				// check for obsolete name.
-				ASN1_OBJECT* oid = (ASN1_OBJECT*)pExtension->object;
-
-				if (memcmp(oid->data, ::OID_SUBJECT_ALT_NAME, 3) == 0)
-				{
-					oid->nid = nid = NID_subject_alt_name;
-				}
-			}
-
-			if (nid == NID_subject_alt_name)
-			{
-				subjectAltName = (GENERAL_NAMES*)X509V3_EXT_d2i(pExtension);
-			}
-		}
+		subjectAltName = (GENERAL_NAMES*)X509V3_EXT_d2i(pExtension);
 
 		// extract the fields from the subject alt name extension.
 		if (subjectAltName != NULL)

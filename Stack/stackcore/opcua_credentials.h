@@ -17,6 +17,8 @@
 #ifndef _OpcUa_Credentials_H_
 #define _OpcUa_Credentials_H_ 1
 
+#include <opcua_crypto.h>
+
 OPCUA_BEGIN_EXTERN_C
 
 /*============================================================================

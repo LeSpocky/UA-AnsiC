@@ -130,7 +130,7 @@
  *===========================================================================*/
 /** @brief Enable output to trace device. */
 #ifndef OPCUA_TRACE_ENABLE
-#define OPCUA_TRACE_ENABLE                          OPCUA_CONFIG_NO
+#define OPCUA_TRACE_ENABLE                          OPCUA_CONFIG_YES
 #endif
 
 /** @brief Enable output to trace device. */
@@ -138,14 +138,14 @@
 
 /** @brief output the messages in errorhandling macros; requires OPCUA_ERRORHANDLING_OMIT_METHODNAME set to OPCUA_CONFIG_NO */
 #ifndef OPCUA_TRACE_ERROR_MACROS
-#define OPCUA_TRACE_ERROR_MACROS                    OPCUA_CONFIG_NO
+#define OPCUA_TRACE_ERROR_MACROS                    OPCUA_CONFIG_YES
 #endif
 
 /** @brief Omit the methodname in initialize status macro. */
 #define OPCUA_ERRORHANDLING_OMIT_METHODNAME         OPCUA_CONFIG_NO
 
 /** @brief Add __LINE__ and __FILE__ information to the trace line. */
-#define OPCUA_TRACE_FILE_LINE_INFO                  OPCUA_CONFIG_NO
+#define OPCUA_TRACE_FILE_LINE_INFO                  OPCUA_CONFIG_YES
 
 /*============================================================================
  * security

@@ -33,8 +33,14 @@
 #define _OpcUa__P_Interface_H_ 1
 
 #include <stdarg.h>
+
+/* stackcore */
+#include <opcua_crypto.h>
+#include <opcua_pki.h>
+
 #include "opcua_p_crypto.h"
 #include "opcua_p_pki.h"
+
 
 OPCUA_BEGIN_EXTERN_C
 

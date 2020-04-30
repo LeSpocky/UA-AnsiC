@@ -17,6 +17,8 @@
 #ifndef _OpcUa_BuiltInTypes_H_
 #define _OpcUa_BuiltInTypes_H_ 1
 
+#include <opcua_platformdefs.h>
+
 OPCUA_BEGIN_EXTERN_C
 
 /*============================================================================

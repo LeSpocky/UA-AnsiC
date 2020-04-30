@@ -27,6 +27,7 @@
 #include <opcua_timer.h>
 #include <opcua_trace.h>
 #include <opcua_utilities.h>
+#include <opcua_p_interface.h>
 
 OPCUA_BEGIN_EXTERN_C
 

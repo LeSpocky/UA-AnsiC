@@ -550,6 +550,10 @@ OpcUa_InitializeStatus(OpcUa_Module_P_OpenSSL, "PKI_ValidateCertificate");
                 break;
             }
         case X509_V_ERR_DEPTH_ZERO_SELF_SIGNED_CERT:
+			{	// trust self signed certificate
+				uStatus = OpcUa_Good;
+				break;
+			}
         case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT_LOCALLY:
         case X509_V_ERR_UNABLE_TO_GET_ISSUER_CERT:
             {

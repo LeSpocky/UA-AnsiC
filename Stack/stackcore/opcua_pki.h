@@ -17,6 +17,7 @@
 #ifndef _OpcUa_PKIProvider_H_
 #define _OpcUa_PKIProvider_H_ 1
 
+#include <opcua_crypto.h>
 #include <opcua_p_pki.h>
 
 OPCUA_BEGIN_EXTERN_C

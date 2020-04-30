@@ -65,7 +65,6 @@
 #include <openssl/conf.h>
 
 //static char OID_AUTHORITY_KEY_IDENTIFIER[] = { 85, 29, 1 };
-static char OID_SUBJECT_ALT_NAME[] = { 85, 29, 7 };
 
 /*============================================================================
  * OpcUa_ReadFile
@@ -387,11 +386,11 @@ OpcUa_InitializeStatus(OpcUa_Module_Crypto, "OpcUa_Certificate_GetFilePathForCer
 
 	if (a_eFileFormat == OpcUa_Crypto_Encoding_DER)
 	{
-		filePath += DIR_SEPARATOR"certs"DIR_SEPARATOR;
+		filePath += DIR_SEPARATOR "certs" DIR_SEPARATOR;
 	}
 	else
 	{
-		filePath += DIR_SEPARATOR"private"DIR_SEPARATOR;
+		filePath += DIR_SEPARATOR "private" DIR_SEPARATOR;
 	}
 
 	if (a_bCreateAlways)
@@ -1064,6 +1063,7 @@ OpcUa_InitializeStatus(OpcUa_Module_Crypto, "OpcUa_Certificate_GetThumbprint");
 	if (a_psThumbprint != NULL)
 	{
 		// compute the hash.
+		//	TODO	Consider using X509_digest()
 		SHA1(a_pCertificate->Data, a_pCertificate->Length, pThumbprint);
 
 		// allocate string to return.
@@ -1080,8 +1080,15 @@ OpcUa_InitializeStatus(OpcUa_Module_Crypto, "OpcUa_Certificate_GetThumbprint");
 
 	if (a_psNameEntries != NULL || a_psCommonName != NULL)
 	{
+		/*
+		 *	TODO	This is about getting the "common name", consider
+		 *			using 'X509_NAME_*' functions on the result of
+		 *			'X509_get_subject_name()' instead of parsing strings
+		 *			by ourselves …
+		 */
+
 		// get the subject name.
-		X509_name_st* pName = X509_get_subject_name(pCertificate);
+		X509_NAME* pName = X509_get_subject_name(pCertificate);
 
 		if (pName == NULL)
 		{
@@ -1147,31 +1154,11 @@ OpcUa_InitializeStatus(OpcUa_Module_Crypto, "OpcUa_Certificate_GetThumbprint");
 	if (a_psApplicationUri != NULL || a_psDomains != NULL)
 	{
 		// find the subject alt name extension.
-		STACK_OF(X509_EXTENSION)* pExtensions = pCertificate->cert_info->extensions;
+		int loc = X509_get_ext_by_NID(pCertificate,
+									  NID_subject_alt_name, -1);
+		X509_EXTENSION *pExtension = X509_get_ext(pCertificate, loc);
 
-		for (int ii = 0; ii < sk_X509_EXTENSION_num(pExtensions); ii++)
-		{
-			X509_EXTENSION* pExtension = sk_X509_EXTENSION_value(pExtensions, ii);
-
-			// get the internal id for the extension.
-			int nid = OBJ_obj2nid(pExtension->object);
-
-			if (nid == 0)
-			{
-				// check for obsolete name.
-				ASN1_OBJECT* oid = (ASN1_OBJECT*)pExtension->object;
-
-				if (memcmp(oid->data, ::OID_SUBJECT_ALT_NAME, 3) == 0)
-				{
-					oid->nid = nid = NID_subject_alt_name;
-				}
-			}
-
-			if (nid == NID_subject_alt_name)
-			{
-				subjectAltName = (GENERAL_NAMES*)X509V3_EXT_d2i(pExtension);
-			}
-		}
+		subjectAltName = (GENERAL_NAMES*)X509V3_EXT_d2i(pExtension);
 
 		// extract the fields from the subject alt name extension.
 		if (subjectAltName != NULL)

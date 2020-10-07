@@ -28,8 +28,6 @@
 #include <opcua_binaryencoder.h>
 #include <opcua_binaryencoderinternal.h>
 
-#include <ttlog_OPCUA_logmacro.h>
-
 /*============================================================================
  * OpcUa_BinaryDecoder
  *
@@ -1611,10 +1609,11 @@ OpcUa_StatusCode OpcUa_BinaryDecoder_ReadExtensionObject(
             /*            OpcUa_GotoErrorIfBad(uStatus); */
             if (0 != uStatus)
 			{
-				OPCUA_WARN_WRITE("OpcUa_StringTable_FindIndex failed for \"%s\""
-						" in OpcUa_BinaryDecoder_ReadExtensionObject(). "
-						"Setting index to 0.\n",
-						OpcUa_String_GetRawString(&a_pValue->TypeId.NamespaceUri));
+				OpcUa_Trace(OPCUA_TRACE_LEVEL_WARNING,
+                            "OpcUa_StringTable_FindIndex failed for \"%s\""
+                            " in OpcUa_BinaryDecoder_ReadExtensionObject(). "
+                            "Setting index to 0.\n",
+                            OpcUa_String_GetRawString(&a_pValue->TypeId.NamespaceUri));
 				nIndex = 0;
 				uStatus = OpcUa_Good;
 			}
